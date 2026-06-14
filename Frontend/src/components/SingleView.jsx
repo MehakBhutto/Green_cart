@@ -12,7 +12,7 @@ const SingleView = () => {
 
     const fetchProduct = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/product/public/product/${id}`, {
+            const response = await fetch(`https://green-cart-tan-three.vercel.app/api/product/public/product/${id}`, {
                 method: 'GET',});
             if (response.ok) {
                 const json = await response.json();
