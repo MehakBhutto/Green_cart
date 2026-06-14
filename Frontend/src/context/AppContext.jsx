@@ -55,9 +55,7 @@ export const AppContextProvider = ({children}) => {
         fetchUser,
         logout,
         showAddress,
-        setShowAddress,
-        // address,
-        // setAddress
+        setShowAddress
     }
 
     return <AppContext.Provider value={value}>

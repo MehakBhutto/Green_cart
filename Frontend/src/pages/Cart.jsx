@@ -34,6 +34,7 @@ const Cart = () => {
         const orderBody = {
             products: products.map((item) => ({
                 product: item.product._id || item.product,
+                name: item.product.name,
                 quantity: item.quantity,
             })),
             address: composedAddress,

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
+import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 
 const AllOrders = () => {
     const {user} = useAppContext()
+    const location = useLocation()
+    const isAdminOrders = location.pathname.includes('/seller/')
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -13,6 +16,7 @@ const AllOrders = () => {
             setLoading(true)
             try {
                 const { data } = await axios.get(url)
+                console.log('Orders response:', data)
                 if (data.success) {
                     setOrders(data.data || [])
                 } else {
@@ -26,10 +30,12 @@ const AllOrders = () => {
         }
 
     useEffect(() => {
-        {user == false ? 
-            fetchOrders('/api/order/admin') : fetchOrders('/api/order/user') 
+        if (isAdminOrders) {
+            fetchOrders('/api/order/admin')
+        } else {
+            fetchOrders('/api/order/user')
         }
-    }, [axios])
+    }, [isAdminOrders])
 
     return (
         <div className="md:p-10 p-4 space-y-4">
@@ -70,7 +76,7 @@ const AllOrders = () => {
                     <p className="font-medium text-base my-auto text-black/70">${order.totalPrice ?? order.amount ?? 0}</p>
 
                     <div className="flex flex-col text-sm">
-                        <p>Method: {order.paymentType ?? order.paymentType ?? 'N/A'}</p>
+                        <p>Method: {order.method ?? order.paymentType ?? 'N/A'}</p>
                         <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
                         <p>Payment: {order.orderStatus ? "Paid" : "Pending"}</p>
                     </div>

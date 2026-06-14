@@ -6,19 +6,29 @@ import { useParams } from "react-router-dom";
 
 const SingleView = () => {
     const { id } = useParams();
-    const {navigate} = useAppContext()
-    const [product, setProduct] = useState(dummyProducts.find((p) => p._id == id))
-    const [thumbnail, setThumbnail] = useState(product?.image?.[0]);
+    const {navigate, setCart} = useAppContext()
+    const [product, setProduct] = useState(dummyProducts.find((p) => p._id == id) || null)
+    const [thumbnail, setThumbnail] = useState(product?.image?.[0] || null);
 
-    useEffect(() => {
-         const foundProduct = dummyProducts.find((p) => p._id == id);
-         setProduct(foundProduct);
-
-        if (foundProduct) {
-            setThumbnail(foundProduct.image?.[0]);
+    const fetchProduct = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/product/public/product/${id}`, {
+                method: 'GET',});
+            if (response.ok) {
+                const json = await response.json();
+                const foundProduct = json?.data || json;
+                setProduct(foundProduct);
+                setThumbnail(foundProduct?.image?.[0] || foundProduct?.image?.[0] || thumbnail);
+            } 
+        } catch (error) {
+            console.error('Error fetching product:', error);
         }
-    }
-    ,[id])
+    };
+    
+    useEffect(() => {
+        fetchProduct();
+    }, [id]);
+
     
     return product && (
         <div className="max-w-6xl w-full px-6 mt-15">
@@ -26,7 +36,7 @@ const SingleView = () => {
                 <span onClick={() => navigate('/')} className='cursor-pointer'>Home</span> /
                 <span onClick={() => navigate('/products')} className='cursor-pointer'> Products</span> /
                 <span onClick={() => navigate(`/category/${product.category.toLowerCase()}`)} className='cursor-pointer'> {product.category}</span> /
-                <span className="text-indigo-500" className='cursor-pointer'> {product.name}</span>
+                <span className="text-indigo-500 cursor-pointer"> {product.name}</span>
             </p>
 
             <div className="flex flex-col md:flex-row gap-16 mt-4">
@@ -70,16 +80,47 @@ const SingleView = () => {
 
                     <p className="text-base font-medium mt-6">About Product</p>
                     <ul className="list-disc ml-4 text-gray-500/70">
-                        {product.description.map((desc, index) => (
-                            <li key={index}>{desc}</li>
-                        ))}
+                        {Array.isArray(product.description)
+                            ? product.description.map((desc, index) => (
+                                console.log(desc),
+                                <li key={index} dangerouslySetInnerHTML={{ __html: desc }} />
+                            ))
+                            : <li dangerouslySetInnerHTML={{ __html: product.description }} />
+                        }
                     </ul>
 
                     <div className="flex items-center mt-10 gap-4 text-base">
-                        <button className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition" >
+                        <button onClick={() => {
+                                            setCart((prev) => 
+                                                (prev) ?
+                                                [...prev,
+                                                    {
+                                                        product,
+                                                        quantity: 1,
+                                                    },] :
+                                                    [{
+                                                        product,
+                                                        quantity: 1,
+                                                    },]);
+                                            }}
+                        className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition" >
                             Add to Cart
                         </button>
-                        <button className="w-full py-3.5 cursor-pointer font-medium bg-indigo-500 text-white hover:bg-indigo-600 transition" >
+                        <button onClick={() => {
+                                            setCart((prev) => 
+                                                (prev) ?
+                                                [...prev,
+                                                    {
+                                                        product,
+                                                        quantity: 1,
+                                                    },] :
+                                                    [{
+                                                        product,
+                                                        quantity: 1,
+                                                    },]);
+                                            navigate('/cart')
+                                            }}
+                        className="w-full py-3.5 cursor-pointer font-medium bg-indigo-500 text-white hover:bg-indigo-600 transition" >
                             Buy now
                         </button>
                     </div>

@@ -3,12 +3,12 @@ import {assets} from '../assets/assets.js'
 import {useState} from 'react'
 import { useAppContext } from '../context/AppContext';
 import axios from 'axios';
-import toast from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 
 const Navbar = () => {
     const [open, setOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
-    const { user, setUser, setShowUserLogin, navigate, cart, logout } = useAppContext();
+    const { user, setUser, setShowUserLogin, navigate, cart, setCart, logout } = useAppContext();
 
     const handleSearch = (event) => {
         event.preventDefault();
@@ -22,10 +22,19 @@ const Navbar = () => {
     };
 
     const setUserLogout = async() => {
-        const response = await axios.post('/api/auth/user/logout', user);
-        if(response.data.success){
-            toast.success('Logged out successfully');
-            setUser(false)
+        try {
+            const response = await axios.post('/api/auth/user/logout');
+            if (response.data.success) {
+                toast.success('Logged out successfully');
+                setUser(null);
+                setCart(null);
+                setShowUserLogin(false);
+                navigate('/');
+                return;
+            }
+            toast.error(response.data.message || 'Logout failed');
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message || 'Logout failed');
         }
     }
 
@@ -73,9 +82,9 @@ const Navbar = () => {
                     <div className='relative group border-[3px] rounded-full border-gray-600 cursor-pointer'>
                         <img src={assets.profile_icon} className='w-10' alt='profile icon'/>
                         <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded-md text-sm z-40'>
-                            <li onClick={() => navigate(`/${user.id}/orders`)} className='p-1.5 pl-3 hover:bg-primary/20 cursor-pointer'>My Orders</li>
+                            <li onClick={() => navigate(`/${user}/orders`)} className='p-1.5 pl-3 hover:bg-primary/20 cursor-pointer'>My Orders</li>
                             <li onClick={() => {
-                                logout;
+                                logout();
                                 setUserLogout();
                                 navigate("/");
                             }} className='p-1.5 pl-3 hover:bg-primary/20 cursor-pointer'>Logout</li>

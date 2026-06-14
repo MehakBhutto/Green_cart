@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { assets, dummyProducts } from '../assets/assets';
+import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
@@ -7,38 +8,61 @@ const Product = (prop) => {
     const location = useLocation();
     const { navigate, cart, setCart } = useAppContext();
     const searchQuery = new URLSearchParams(location.search).get('search')?.toLowerCase() || '';
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const displayProducts = () => {
-        let products;
-        if (location.pathname === '/') {
-            products = dummyProducts.slice(0, 5);
-        } else if (location.pathname === '/products') {
-            products = dummyProducts;
-        } else {
-            products = dummyProducts.filter(
-                (product) =>
-                    product.category.toLowerCase() ===
-                    prop.category?.toLowerCase()
-            );
-        }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios('http://localhost:8080/api/product');
+        const data = res.data?.data || [];
 
-        if (!searchQuery) {
-            return products;
-        }
-
-        return products.filter((product) =>
-            product.name.toLowerCase().includes(searchQuery) ||
-            product.category.toLowerCase().includes(searchQuery)
-        );
+        console.log("Fetched products:", data);
+        return data;
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        return [];
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const filteredProducts = displayProducts();
-
-    // helper: get quantity from cart
     const getQuantity = (productId) => {
-        const item = cart?.find((i) => i.product?._id === productId);
-        return item ? item.quantity : 0;
+      const item = cart?.find((item) => item.product._id === productId);
+      return item?.quantity || 0;
     };
+    
+    useEffect(() => {
+        const displayProducts = async () => {
+            let products = await fetchData();
+
+            if (location.pathname === '/') {
+                products = products.slice(0, 5);
+            } else if (location.pathname === '/products') {
+                products = products;
+            } else {
+                products = products.filter(
+                    (product) =>
+                        product?.category?.toLowerCase() ===
+                        prop?.category?.toLowerCase()
+                );
+            }
+
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+
+                products = products.filter((product) =>
+                    product?.name?.toLowerCase().includes(query) ||
+                    product?.category?.toLowerCase().includes(query)
+                );
+            }
+
+            console.log("Final products:", products);
+            setFilteredProducts(products);
+        };
+
+        displayProducts();
+    }, [location.pathname, searchQuery, prop?.category]);
 
     return (
         <>

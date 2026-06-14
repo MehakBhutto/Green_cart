@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 
 const AddProduct = () => {
 
@@ -24,15 +25,31 @@ const AddProduct = () => {
         formData.append('price', price)
         formData.append('offerPrice', offerPrice)
 
-        const response = await fetch('http://localhost:8080/api/product/admin', {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-        })
+        try {
+            const response = await fetch('http://localhost:8080/api/product/admin', {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            })
 
-        if (!response.ok) {
-            const errorText = await response.text()
-            console.error('Product add failed:', response.status, errorText)
+            if (!response.ok) {
+                const errorText = await response.text()
+                console.error('Product add failed:', response.status, errorText)
+                toast.error('Failed to add product')
+                return
+            }
+
+            toast.success('Product added successfully')
+            // reset form
+            SetName('')
+            setDescription('')
+            setCategory('')
+            setPrice(0)
+            setOfferPrice(0)
+            setImages([])
+        } catch (err) {
+            console.error(err)
+            toast.error('Network error while adding product')
         }
     }
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import Navbar from './components/Navbar'
+import { Toaster } from 'react-hot-toast'
 import {Routes, Route, useLocation} from 'react-router-dom'
 import { useAppContext } from './context/AppContext'
 import Home from './pages/Home'
@@ -21,6 +22,7 @@ const App = () => {
   const { showUserLogin } = useAppContext()
   return (
     <div>
+      <Toaster />
       {isSellerPath? null : <Navbar/>}
       {showUserLogin && <Signin />}
       <div className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
