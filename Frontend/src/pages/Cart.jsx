@@ -48,7 +48,7 @@ const Cart = () => {
         };
 
         try {
-            const response = await axios.post('/api/order/create', orderBody);
+            const response = await axios.post('https://green-cart-tan-three.vercel.app/api/order/create', orderBody);
             if (response.data.success) {
                 toast.success(response.data.message);
                 setCart(null);
