@@ -14,7 +14,7 @@ const Product = (prop) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios('http://localhost:8080/api/product');
+        const res = await axios('https://green-cart-tan-three.vercel.app/api/product');
         const data = res.data?.data || [];
 
         console.log("Fetched products:", data);
