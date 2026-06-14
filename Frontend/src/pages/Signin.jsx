@@ -29,7 +29,7 @@ function Signin() {
       console.log(payload);
 
       console.log(state)
-      const { data } = await axios.post(`http://localhost:8080/api/auth/user/${action}`, payload );
+      const { data } = await axios.post(`https://green-cart-tan-three.vercel.app/auth/user/${action}`, payload );
 
       console.log(data);
       if (!data.success) {
