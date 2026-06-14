@@ -1,4 +1,5 @@
 const express = require('express');
+require('./dotenv');
 const app = express()
 const authRoute = require('./routes/authRoute')
 const orderRoute = require('./routes/orderRoute')
@@ -8,9 +9,9 @@ const cookieParser = require('cookie-parser');
 const path = require('path')
 const cors = require('cors');
 const fs = require('fs')
-const PORT = 8080
+const PORT = process.env.PORT || 8080
 
-mongoose.connect('mongodb://127.0.0.1:27017/green_cart')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.log("MongoDB connection error:", err));
 

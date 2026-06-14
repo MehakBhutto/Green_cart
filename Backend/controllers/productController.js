@@ -69,7 +69,7 @@ const deleteProduct = async(req, res) => {
         })
     }
         const {productId} = req.params;
-        const deleteProduct = await Product.findByIdAndDelete(productId);
+        const deletedProduct = await Product.findByIdAndDelete(productId);
         for(const imageUrl of deletedProduct.image){
         const deleteImage = await cloudinary.uploader.destroy(
             {public_id: imageUrl.split('/').pop()})}
@@ -97,11 +97,13 @@ const getAllProducts = async(req, res) => {
 
 const getSingleProduct = async(req, res) => {
     try{
-        const productId = req.params;
-        const Product = await Product.findById(productId);
+        const { productId } = req.params;
+        console.log('productId', productId)
+        const product = await Product.findById(productId);
+        console.log(product)
         res.status(200).json({
             message: 'Good Going',
-            data: Product
+            data: product
         })
     }catch(e){
         res.status(500).json({message: 'Stopped'})
@@ -111,7 +113,7 @@ const getSingleProduct = async(req, res) => {
 const getProductByCategory = async(req, res) => {
     try{
         const {category} = req.params;
-        const products = await Product.findMany({category});
+        const products = await Product.find({category});
         if(products){
             return res.status(200).json({
             message: 'Good Going',

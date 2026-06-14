@@ -19,7 +19,8 @@ const orderSchema = new mongoose.Schema({
     },
     products: [{
         product: {
-            type: mongoose.Schema.Types.Mixed,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
             required: true
         },
         quantity: {
@@ -28,7 +29,7 @@ const orderSchema = new mongoose.Schema({
         }
     }],
     address: {
-        type: String,
+        type: mongoose.Schema.Types.Mixed,
         required: true
     },
     // `address` now stores the full shipping address as a single string.

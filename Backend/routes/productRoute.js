@@ -14,9 +14,9 @@ const {
     = require('../controllers/productController');
 
 router.get('/', getAllProducts);
-router.get('/public/:productId', getSingleProduct);
-router.get("/public/search", getProductBySearch)
-router.get('/public/:category', getProductByCategory)
+router.get('/public/product/:productId', getSingleProduct);
+router.get('/public/search', getProductBySearch)
+router.get('/public/category/:category', getProductByCategory)
 router.post('/admin',  upload.array('images', 4), addProduct);
 router.put('/admin/:productId',  upload.array('images', 4), editProduct);
 router.delete('/admin/:productId',  deleteProduct);
