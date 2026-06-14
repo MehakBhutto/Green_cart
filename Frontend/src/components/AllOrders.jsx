@@ -31,9 +31,9 @@ const AllOrders = () => {
 
     useEffect(() => {
         if (isAdminOrders) {
-            fetchOrders('/api/order/admin')
+            fetchOrders('https://green-cart-tan-three.vercel.app/api/order/admin')
         } else {
-            fetchOrders('/api/order/user')
+            fetchOrders('https://green-cart-tan-three.vercel.app/api/order/user')
         }
     }, [isAdminOrders])
 
