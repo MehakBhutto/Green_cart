@@ -26,7 +26,7 @@ const AddProduct = () => {
         formData.append('offerPrice', offerPrice)
 
         try {
-            const response = await fetch('http://localhost:8080/api/product/admin', {
+            const response = await fetch('https://green-cart-tan-three.vercel.app/api/product/admin', {
                 method: 'POST',
                 credentials: 'include',
                 body: formData,
