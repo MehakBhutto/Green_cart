@@ -23,7 +23,7 @@ const Navbar = () => {
 
     const setUserLogout = async() => {
         try {
-            const response = await axios.post('/api/auth/user/logout');
+            const response = await axios.post('https://green-cart-tan-three.vercel.app/api/auth/user/logout');
             if (response.data.success) {
                 toast.success('Logged out successfully');
                 setUser(null);
