@@ -9,7 +9,7 @@ const PList = () => {
         const fetchProducts = async () => {
             setLoading(true)
             try {
-                const res = await fetch('http://localhost:8080/api/product')
+                const res = await fetch('https://green-cart-tan-three.vercel.app/api/product')
                 const json = await res.json()
                 // backend returns { message, data }
                 const data = json.data || json
